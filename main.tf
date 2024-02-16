@@ -102,3 +102,64 @@ resource "aws_instance" "pxn_ec2"{
     Name = "PXN EC2 Instance"
   }
 }
+
+
+
+# Security Group for the RDS instance
+resource "aws_security_group" "pxn_sg_rds" {
+  name        = "pxn_sg_rds"
+  description = "Allow access to RDS from EC2 instances and externally"
+  vpc_id      = aws_vpc.pxn.id
+
+  /*# Ingress rule to allow traffic from the EC2 security group
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    security_groups = [aws_security_group.pxn_sg_ec2.id]
+  }*/
+
+  # To allow access from specific IP addresses or ranges, replace "0.0.0.0/0" with your IP/range
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "pxn_sg_rds"
+  }
+}
+
+# DB Subnet Group for the RDS instance
+resource "aws_db_subnet_group" "pxn_db_subnet_group" {
+  name       = "pxn-db-subnet-group"
+  subnet_ids = [aws_subnet.public_subnets[0].id, aws_subnet.public_subnets[1].id, aws_subnet.public_subnets[2].id]
+
+  tags = {
+    Name = "pxn-db-subnet-group"
+  }
+}
+
+# RDS Instance
+resource "aws_db_instance" "pxn_rds" {
+  allocated_storage    = 20
+  storage_type         = "gp3"
+  engine               = "postgres"
+  engine_version       = "15.5"
+  instance_class       = "db.t3.micro"
+  db_name              = "pxndb"
+  username             = "pxnadmin"
+  password             = "pxnadmin"
+  
+  db_subnet_group_name = aws_db_subnet_group.pxn_db_subnet_group.name
+  vpc_security_group_ids = [aws_security_group.pxn_sg_rds.id]
+  
+  skip_final_snapshot  = true
+  publicly_accessible  = true
+
+  tags = {
+    Name = "PXN RDS Instance"
+  }
+}
