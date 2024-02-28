@@ -78,6 +78,14 @@ resource "aws_security_group" "pxn_sg_ec2" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Ingress rule to allow TCP port 8080 from anywhere
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   # Allow outbound traffic
   egress {
     from_port   = 0
