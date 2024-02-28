@@ -78,6 +78,14 @@ resource "aws_security_group" "pxn_sg_ec2" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Allow outbound traffic
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags = {
     Name = "pxn_sg_ec2"
   }
