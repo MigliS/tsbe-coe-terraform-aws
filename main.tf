@@ -120,22 +120,21 @@ resource "aws_instance" "pxn_ec2"{
 
   user_data = <<-EOT
     #!/bin/bash
-    sudo apt update
     sudo apt install openjdk-17-jdk -y
-    echo "export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> ~/.bashrc
+    sudo echo "export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> ~/.bashrc
     source ~/.bashrc
 
     cd /opt && git clone https://github.com/spring-projects/spring-petclinic.git
     cd /opt/spring-petclinic
+    ./mvnw package
 
     # Create application.properties file from Terraform template
-    cat <<EOF > /opt/spring-petclinic/src/main/resources/application.properties
+    sudo cat <<EOF > /opt/spring-petclinic/src/main/resources/application.properties
     ${templatefile("${path.module}/application.properties.tpl", {
       db_endpoint = aws_db_instance.pxn_rds.endpoint
     })}
     EOF
 
-    ./mvnw package
     nohup java -jar target/*.jar > /tmp/petclinic.log 2>&1 &
   EOT
 }
