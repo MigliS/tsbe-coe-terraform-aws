@@ -101,7 +101,7 @@ resource "aws_security_group" "pxn_sg_ec2" {
 
 resource "aws_instance" "pxn_ec2"{
   ami           = "ami-0c7217cdde317cfec"
-  instance_type = "t3a.micro"
+  instance_type = "t3a.large"
   count         = 1
   subnet_id     = aws_subnet.public_subnets[0].id # Use the first subnet from the list (172.16.1.0/24)
   key_name      = aws_key_pair.pxn.key_name
@@ -117,6 +117,27 @@ resource "aws_instance" "pxn_ec2"{
   tags = {
     Name = "PXN EC2 Instance"
   }
+
+  user_data = <<-EOT
+    #!/bin/bash
+    sudo apt update
+    sudo apt install openjdk-17-jdk -y
+    echo "export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> ~/.bashrc
+    source ~/.bashrc
+
+    cd /opt && git clone https://github.com/spring-projects/spring-petclinic.git
+    cd /opt/spring-petclinic
+
+    # Create application.properties file from Terraform template
+    cat <<EOF > /opt/spring-petclinic/src/main/resources/application.properties
+    ${templatefile("${path.module}/application.properties.tpl", {
+      db_endpoint = aws_db_instance.pxn_rds.endpoint
+    })}
+    EOF
+
+    ./mvnw package
+    nohup java -jar target/*.jar > /tmp/petclinic.log 2>&1 &
+  EOT
 }
 
 
