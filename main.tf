@@ -120,6 +120,7 @@ resource "aws_instance" "pxn_ec2"{
 
   user_data = <<-EOT
     #!/bin/bash
+    sudo apt update
     sudo apt install openjdk-17-jdk -y
     sudo echo "export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> ~/.bashrc
     source ~/.bashrc
