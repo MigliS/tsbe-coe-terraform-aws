@@ -33,4 +33,4 @@ override.tf.json
 .terraformrc
 terraform.rc
 ./terraform.out
-./*/terraform.out
+petclinic/terraform.out
