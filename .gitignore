@@ -1,5 +1,5 @@
 # Local .terraform directories
-**/.terraform/*
+.terraform/*
 
 # .tfstate files
 *.tfstate
@@ -34,3 +34,10 @@ override.tf.json
 terraform.rc
 ./terraform.out
 petclinic/terraform.out
+petclinic/.terraform/*
+k8s-tf/terraform.out
+k8s-tf/.terraform/*
+
+# Ignore Lockfiles
+k8s-tf/*.hcl
+test-k8s-tf/*.hcl
