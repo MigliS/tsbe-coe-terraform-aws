@@ -16,22 +16,12 @@ resource "aws_vpc" "eks_vpc" {
 resource "aws_subnet" "public" {
   count                                       = 3
   vpc_id                                      = aws_vpc.eks_vpc.id
-  cidr_block                                  = ["172.16.0.0/24", "172.16.1.0/24", "172.16.2.0/24"][count.index]
+  cidr_block                                  = ["172.16.0.0/24", "172.16.1.0/24", "172.16.2.0/24", "172.16.3.0/24", "172.16.4.0/24", "172.16.5.0/24"][count.index]
   availability_zone                           = ["us-east-1a", "us-east-1b", "us-east-1c"][count.index]
   map_public_ip_on_launch                     = true
   enable_resource_name_dns_a_record_on_launch = true
   tags = {
     Name = "public_subnet-${count.index}"
-  }
-}
-
-resource "aws_subnet" "private" {
-  count             = 3
-  vpc_id            = aws_vpc.eks_vpc.id
-  cidr_block        = ["172.16.3.0/24", "172.16.4.0/24", "172.16.5.0/24"][count.index]
-  availability_zone = ["us-east-1a", "us-east-1b", "us-east-1c"][count.index]
-  tags = {
-    Name = "private_subnet-${count.index}"
   }
 }
 
@@ -57,10 +47,26 @@ resource "aws_route_table" "eks_public_rt" {
 }
 
 resource "aws_route_table_association" "public_subnet_asso" {
-  count          = 3
+  count          = length(aws_subnet.public.*.id)
   subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.eks_public_rt.id
 }
+
+resource "aws_eip" "nat" {
+  count  = length(aws_subnet.public.*.id)
+  domain = "vpc"
+}
+
+resource "aws_nat_gateway" "nat" {
+  count         = length(aws_subnet.public.*.id)
+  allocation_id = aws_eip.nat[count.index].id
+  subnet_id     = aws_subnet.public[count.index].id
+
+  tags = {
+    Name = "nat_gateway-${count.index}"
+  }
+}
+
 
 resource "aws_key_pair" "pxn" {
   key_name   = "pxn-key"
@@ -71,6 +77,13 @@ resource "aws_security_group" "eks_sg" {
   name        = "eks_cluster_sg"
   description = "Security group for all nodes in the cluster"
   vpc_id      = aws_vpc.eks_vpc.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   ingress {
     from_port   = 443
@@ -96,11 +109,12 @@ resource "aws_eks_cluster" "eks_cluster" {
   role_arn = "arn:aws:iam::590184115564:role/LabRole"
 
   vpc_config {
-    subnet_ids = aws_subnet.private[*].id
+    subnet_ids = aws_subnet.public[*].id
   }
 
   depends_on = [
-    aws_subnet.private
+    aws_subnet.public,
+    aws_route_table_association.public_subnet_asso
   ]
 }
 
@@ -108,7 +122,7 @@ resource "aws_eks_node_group" "node_group" {
   cluster_name    = aws_eks_cluster.eks_cluster.name
   node_group_name = "my-node-group"
   node_role_arn   = "arn:aws:iam::590184115564:role/LabRole"
-  subnet_ids      = aws_subnet.private[*].id
+  subnet_ids      = aws_subnet.public[*].id
 
   scaling_config {
     desired_size = 2
