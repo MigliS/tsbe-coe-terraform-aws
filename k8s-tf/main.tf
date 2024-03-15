@@ -67,3 +67,26 @@ resource "aws_key_pair" "pxn" {
   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDAJQDCWILY/F4kBFP4zQL2y3xAJ/H++71CAa4FtDOT9m8eVKS6fFTpurTJERjzdIE7EAsiA4z7FQyMo2kvyIzCX5/EGcYrINEwlkUghQqs+VY5ZFd2DgR7SYw5UP/FgZu+zKEybu6fsSUp7cU63WwPWd1tMZzEsYA1PN8ctGaqN1wDXq1JnrcD/TelYza+rFMadZGu+FBIkVSAcir0X8Rtnjl0qfdB1BjCgKp7irrSCuMTOzn6Wr6Pyk9veu3C1RWZCMFF6kUsWAUMR/qlG2flbvN3sAqwuoxoQ9rsH4NXbw7PRpyKJpcJ0ZQ8D6eAk+cb1lTyL2WHK1VpjohD/d5odvFHR588EZ2yLpVpu3ynkiYb2Ic0U9vkfUgf7FzFEWyqcR+v6VlpaM9qtkrEqKEx8/dUx4QEhON4Wy+zKnI5God/Veg3IQ8mUbEs9REgJl3zFCaNaqq/zFqh/Kn9w/R5Hxw9OIWpS2KglnsAwfeh97KHC0y3UdAQ/OnWoI7z88SJDGdhb5gkNTWsiWc+JbN6VVrvuK2jbWJuAyJyEgsNjTvc821C2ZdqRXcko0BVFVTFRZxxruTdHaLrVZJRdEb3t6mb48Rcwwb3KBNvgYaWCjX8JYA6VWiqHEs8LVDPsmeQakwKKP5dt9Oj63QCIb/dpBSNFIIAkaUbtz7W4daXIw== michael@fedora"
 }
 
+resource "aws_security_group" "eks_sg" {
+  name        = "eks_cluster_sg"
+  description = "Security group for all nodes in the cluster"
+  vpc_id      = aws_vpc.eks_vpc.id
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "eks_cluster_sg"
+  }
+}
