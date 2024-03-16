@@ -70,7 +70,7 @@ resource "aws_nat_gateway" "nat" {
 
 resource "aws_key_pair" "pxn" {
   key_name   = "pxn-key"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDAJQDCWILY/F4kBFP4zQL2y3xAJ/H++71CAa4FtDOT9m8eVKS6fFTpurTJERjzdIE7EAsiA4z7FQyMo2kvyIzCX5/EGcYrINEwlkUghQqs+VY5ZFd2DgR7SYw5UP/FgZu+zKEybu6fsSUp7cU63WwPWd1tMZzEsYA1PN8ctGaqN1wDXq1JnrcD/TelYza+rFMadZGu+FBIkVSAcir0X8Rtnjl0qfdB1BjCgKp7irrSCuMTOzn6Wr6Pyk9veu3C1RWZCMFF6kUsWAUMR/qlG2flbvN3sAqwuoxoQ9rsH4NXbw7PRpyKJpcJ0ZQ8D6eAk+cb1lTyL2WHK1VpjohD/d5odvFHR588EZ2yLpVpu3ynkiYb2Ic0U9vkfUgf7FzFEWyqcR+v6VlpaM9qtkrEqKEx8/dUx4QEhON4Wy+zKnI5God/Veg3IQ8mUbEs9REgJl3zFCaNaqq/zFqh/Kn9w/R5Hxw9OIWpS2KglnsAwfeh97KHC0y3UdAQ/OnWoI7z88SJDGdhb5gkNTWsiWc+JbN6VVrvuK2jbWJuAyJyEgsNjTvc821C2ZdqRXcko0BVFVTFRZxxruTdHaLrVZJRdEb3t6mb48Rcwwb3KBNvgYaWCjX8JYA6VWiqHEs8LVDPsmeQakwKKP5dt9Oj63QCIb/dpBSNFIIAkaUbtz7W4daXIw== michael@fedora"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC00Ns/h8EY/TGMSpsSZ4NvniXtAEx2MlgH8ciFunmxNFqJWz+D50tm3V38OndkvuWXhxaVvHaDcslA5CosRB+mcnSLBW2z7QkA2LxtI4ClIUHTCk6IQ7yIDGYgJ3z3coeNdgBBxgIEF4tLGMx1ciXhK97fhk/Q093Cl3wkm/vCLN0kShBv7OZ4CqYF+0kAuflrjlhrNrlZQpW1CgHyJXxEPyZ98aXDabbISmq4XoltAe/zXBFV3fsNCzaS7nslKj6QqYLp1RHQXpaQ/qWCF4H18Z4uitk5TXTjVbqYOju+7i2FFN3NENHbzas1WkxH74n99+m7wPEsF7GFed+1zDbM7sG4PnZ9t1ke7sX/wBapHCTEUKrB+EtYs13CsBNS1wX7dZbXDgvduLcZahcnm9I1MrJbrqpLkdDMRJYgRAe3koFniM629XddM07JcRbNiDzBPMJbjl9RElwgHjl0CmYL9hRGM7SOVwISrCclR6tXk9hVWMSR61BAT8/DDx4TZ1c="
 }
 
 resource "aws_security_group" "eks_sg" {
@@ -120,7 +120,7 @@ resource "aws_eks_cluster" "eks_cluster" {
 
 resource "aws_eks_node_group" "node_group" {
   cluster_name    = aws_eks_cluster.eks_cluster.name
-  node_group_name = "my-node-group"
+  node_group_name = "k8s-tf"
   node_role_arn   = "arn:aws:iam::590184115564:role/LabRole"
   subnet_ids      = aws_subnet.public[*].id
 
