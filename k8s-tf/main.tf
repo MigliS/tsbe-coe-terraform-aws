@@ -124,6 +124,11 @@ resource "aws_eks_node_group" "node_group" {
   node_role_arn   = "arn:aws:iam::590184115564:role/LabRole"
   subnet_ids      = aws_subnet.public[*].id
 
+  remote_access {
+    ec2_ssh_key               = aws_key_pair.pxn.key_name
+    source_security_group_ids = [aws_security_group.eks_sg.id]
+  }
+
   scaling_config {
     desired_size = 2
     max_size     = 3
