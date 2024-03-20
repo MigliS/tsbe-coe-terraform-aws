@@ -1,0 +1,98 @@
+header {
+    background-color: #003077;
+    padding: 20px 0;
+    text-align: center;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    color: white;
+    margin: 0;
+    font-size: 24px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f7f7f7;
+}
+
+p {
+    font-size: 16px;
+    color: #666;
+    padding: 5px 15px;
+}
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.card {
+    width: 300px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    background-color: #fff;
+}
+
+.card img {
+    width: 100%;
+    display: block;
+}
+
+.card h2 {
+    font-size: 18px;
+    color: #333;
+    padding: 10px 15px;
+    margin: 0;
+}
+
+.card .region {
+    font-size: 16px;
+    color: #666;
+    padding: 5px 15px;
+}
+
+.card .status {
+    font-size: 14px;
+    color: #fff;
+    padding: 10px 15px;
+    margin: 10px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    display: block;
+    width: calc(100% - 30px);
+    text-align: center;
+}
+
+.available {
+    background-color: #4CAF50; /* Green */
+}
+
+.booked {
+    background-color: #F44336; /* Red */
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .gallery {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 600px) {
+    .card {
+        width: 90%;
+    }
+}
