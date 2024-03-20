@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:latest
+        image: miglis/coe-website:latest
         ports:
         - containerPort: 80
 
